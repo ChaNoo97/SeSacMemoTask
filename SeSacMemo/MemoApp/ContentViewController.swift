@@ -19,8 +19,13 @@ class ContentViewController: UIViewController {
 	override func viewDidLoad() {
         super.viewDidLoad()
 		
+		if let text = text {
+			contentTextView.text = text
+		} else {
+			contentTextView.text = ""
+		}
+		
 		contentTextView.becomeFirstResponder()
-		contentTextView.text = "안녕하세요"
 		
 		let shareButton = UIBarButtonItem(title: nil, style: .plain, target: self, action: nil)
 		shareButton.image = UIImage(systemName: "square.and.arrow.up")
@@ -36,7 +41,7 @@ class ContentViewController: UIViewController {
 	func realmSave() {
 		let memoTitle: String
 		let memoContent: String
-		let date = "20211111"
+		let date = Date()
 		let splitText = contentTextView.text.split(separator: "\n", maxSplits: 1)
 		if splitText.isEmpty {
 			//pop and delete

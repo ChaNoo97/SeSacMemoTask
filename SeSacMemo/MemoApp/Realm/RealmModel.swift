@@ -11,12 +11,12 @@ import RealmSwift
 class UserMemo: Object {
 	@Persisted var title: String
 	@Persisted var content: String
-	@Persisted var date: String
+	@Persisted var date: Date
 	@Persisted var pin: Bool
 		
 	@Persisted(primaryKey: true) var _id: ObjectId
 	
-	convenience init(title: String, content: String, date: String) {
+	convenience init(title: String, content: String, date: Date) {
 		self.init()
 		
 		self.title = title
