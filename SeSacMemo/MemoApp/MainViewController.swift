@@ -26,6 +26,24 @@ class MainViewController: UIViewController {
 	let searchController = UISearchController(searchResultsController: nil)
 	
 	var searchedText: String = ""
+	
+	let firstLaunch = FirstLaunch(userDefaults: .standard, key: "com.any-suggestion.FirstLaunch.WasLaunchedBefore")
+	
+	class FirstLaunch {
+		let wasLaunchedBefore: Bool
+		var isFirstLaunch: Bool { return !wasLaunchedBefore }
+		init(getWasLaunchedBefore: () -> Bool,
+			 setWasLaunchedBefore: (Bool) -> ()) {
+			let wasLaunchedBefore = getWasLaunchedBefore()
+			self.wasLaunchedBefore = wasLaunchedBefore
+			if !wasLaunchedBefore {
+				setWasLaunchedBefore(true)
+			}
+		}
+		convenience init(userDefaults: UserDefaults, key: String) { self.init(getWasLaunchedBefore: { userDefaults.bool(forKey: key) }, setWasLaunchedBefore: { userDefaults.set($0, forKey: key) })
+		}
+	}
+	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -55,10 +73,22 @@ class MainViewController: UIViewController {
 		searchController.searchBar.placeholder = "Search Memo"
 		definesPresentationContext = true
 		
+		if firstLaunch.isFirstLaunch {
+			guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "NewbieViewController") as?
+					NewbieViewController else {return}
+			vc.modalPresentationStyle = .fullScreen
+			present(vc, animated: true, completion: nil)
+			
+		}
+
+		
+		
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+
+		
 		mainTableView.reloadData()
 		navigationItem.title = "\(Tasks.count)개의 메모"
 	}
@@ -68,10 +98,8 @@ class MainViewController: UIViewController {
 		let sb = UIStoryboard.init(name: "Content", bundle: nil)
 		guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else { return }
 		
-		// contentview -> mainview 오면 title 변경됨... 해결해야함
 		navigationItem.title = "메모"
 		
-	
 		self.navigationController?.pushViewController(vc, animated: true)
 		
 	}
@@ -117,42 +145,46 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateFormat = "yyyy.MM.dd a hh시mm분"
+		dateFormatter.locale = Locale(identifier: "ko-KR")
 		guard let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as? MainTableViewCell else {return UITableViewCell()}
 		
-//		let attributedString = NSMutableAttributedString(string: searchController.searchBar.text!)
-//		attributedString.addAttribute(.foregroundColor, value: UIColor.orange, range: (cell.titleLabel.text! as NSString).range(of: searchController.searchBar.text!))
-		
-		
 		if indexPath.section == 0 {
-			let row = pinTasks[indexPath.row]
-			cell.titleLabel.text = row.title
 			
+			let row = pinTasks[indexPath.row]
+			print(row)
+			let convertDate = dateFormatter.string(from: row.date)
+			
+			cell.titleLabel.text = row.title
 			cell.titleLabel.font = .boldSystemFont(ofSize: 20)
 			cell.contentLabel.text = row.content
-			cell.dateLabel.text = "\(row.date)"
+			cell.dateLabel.text = convertDate
 			
 			if !isFiltering() {
-				cell.titleLabel.textColor = .black
+				cell.titleLabel.textColor = UIColor.init(named: "myColor")
 			}
 			return cell
 		} else if indexPath.section == 1 {
 			if isFiltering() {
 				let row: UserMemo
 				row = filterTasks[indexPath.row]
+				let convertDate = dateFormatter.string(from: row.date)
+				cell.titleLabel.highlight(searchText: searchController.searchBar.text!)
 				cell.titleLabel.text = row.title
-//				cell.titleLabel.attributedText = attributedString
-				cell.dateLabel.text = "\(row.date)"
+				cell.dateLabel.text = convertDate
 				cell.contentLabel.text = row.content
 			} else {
 				let row = unPinTasks[indexPath.row]
+				let convertDate = dateFormatter.string(from: row.date)
 				cell.titleLabel.text = row.title
 				cell.titleLabel.font = .boldSystemFont(ofSize: 20)
 				cell.contentLabel.text = row.content
-				cell.dateLabel.text = "\(row.date)"
+				cell.dateLabel.text = convertDate
 			}
 		}
 		if !isFiltering() {
-			cell.titleLabel.textColor = .black
+			cell.titleLabel.textColor = UIColor.init(named: "myColor")
 		}
 		return cell
 	}
@@ -163,6 +195,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 			let sb = UIStoryboard.init(name: "Content", bundle: nil)
 			guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else {return}
 			vc.text = "\(row.title)"+"\n\(row.content)"
+	
+			navigationItem.title = "메모"
 			self.navigationController?.pushViewController(vc, animated: true)
 		} else if indexPath.section == 1{
 			if isFiltering() {
@@ -170,12 +204,15 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 				let sb = UIStoryboard.init(name: "Content", bundle: nil)
 				guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else {return}
 				vc.text = "\(row.title)"+"\n\(row.content)"
+				navigationItem.title = "검색"
 				self.navigationController?.pushViewController(vc, animated: true)
 			} else {
 				let row = unPinTasks[indexPath.row]
 				let sb = UIStoryboard.init(name: "Content", bundle: nil)
 				guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else {return}
 				vc.text = "\(row.title)"+"\n\(row.content)"
+				
+				navigationItem.title = "메모"
 				self.navigationController?.pushViewController(vc, animated: true)
 			}
 		}
@@ -284,6 +321,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 				}
 			}
 	}
+	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		let section = indexPath.section
 		if isFiltering() {
@@ -332,5 +370,23 @@ extension MainViewController: UISearchResultsUpdating {
 	}
 	
 	
+}
+
+extension UILabel {
+  
+	func highlight(searchText: String, color: UIColor = .orange) {
+		guard let labelText = self.text else { return }
+		do {
+			let mutableString = NSMutableAttributedString(string: labelText)
+			let regex = try NSRegularExpression(pattern: searchText, options: .caseInsensitive)
+			
+			for match in regex.matches(in: labelText, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length: labelText.utf16.count)) as [NSTextCheckingResult] {
+				mutableString.addAttribute(.foregroundColor, value: color, range: match.range)
+			}
+			self.attributedText = mutableString
+		} catch {
+			print(error)
+		}
+	}
 }
 

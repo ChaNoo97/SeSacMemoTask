@@ -21,6 +21,7 @@
 		FE55063E273A5CFD006B523E /* RealmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE55063D273A5CFD006B523E /* RealmModel.swift */; };
 		FE550641273A5D52006B523E /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = FE550640273A5D52006B523E /* Realm */; };
 		FE550643273A5D52006B523E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FE550642273A5D52006B523E /* RealmSwift */; };
+		FECA367F273E3F8100C01FF8 /* NewbieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECA367E273E3F8100C01FF8 /* NewbieViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		FE550637273909BC006B523E /* MainTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainTableViewCell.xib; sourceTree = "<group>"; };
 		FE55063A273A43DB006B523E /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		FE55063D273A5CFD006B523E /* RealmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmModel.swift; sourceTree = "<group>"; };
+		FECA367E273E3F8100C01FF8 /* NewbieViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewbieViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 				FE55061C2738F981006B523E /* SceneDelegate.swift */,
 				FE55061E2738F981006B523E /* ViewController.swift */,
 				FE5506202738F981006B523E /* Main.storyboard */,
+				FECA367E273E3F8100C01FF8 /* NewbieViewController.swift */,
 				FE5506302738FE25006B523E /* MainViewController.swift */,
 				FE550636273909BC006B523E /* MainTableViewCell.swift */,
 				FE550637273909BC006B523E /* MainTableViewCell.xib */,
@@ -183,6 +186,7 @@
 				FE55061D2738F981006B523E /* SceneDelegate.swift in Sources */,
 				FE5506312738FE25006B523E /* MainViewController.swift in Sources */,
 				FE55063B273A43DB006B523E /* ContentViewController.swift in Sources */,
+				FECA367F273E3F8100C01FF8 /* NewbieViewController.swift in Sources */,
 				FE550638273909BC006B523E /* MainTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

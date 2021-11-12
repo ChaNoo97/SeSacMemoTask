@@ -15,10 +15,11 @@ class ContentViewController: UIViewController {
 	let localRealm = try! Realm()
 	
 	var text: String? = nil
+	var newContentIdentifier: Bool = false
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		
+//		print(newContentIdentifier)
 		if let text = text {
 			contentTextView.text = text
 		} else {
@@ -69,6 +70,7 @@ class ContentViewController: UIViewController {
 	
 	@objc func finishButtonClicked(_ sender: UIBarButtonItem) {
 		realmSave()
+		contentTextView.resignFirstResponder()
 		print(#function)
 	}
 	
