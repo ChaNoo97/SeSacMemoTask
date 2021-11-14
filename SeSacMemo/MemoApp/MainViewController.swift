@@ -53,6 +53,9 @@ class MainViewController: UIViewController {
 		pinTasks = localRealm.objects(UserMemo.self).filter("pin == %@",true)
 		Tasks = localRealm.objects(UserMemo.self)
 		
+		
+		
+		
 		mainTableView.delegate = self
 		mainTableView.dataSource = self
 		
@@ -99,7 +102,7 @@ class MainViewController: UIViewController {
 		guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else { return }
 		
 		navigationItem.title = "메모"
-		
+		vc.newContentIdentifier = true
 		self.navigationController?.pushViewController(vc, animated: true)
 		
 	}
@@ -195,7 +198,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 			let sb = UIStoryboard.init(name: "Content", bundle: nil)
 			guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else {return}
 			vc.text = "\(row.title)"+"\n\(row.content)"
-	
+			vc.comeMemo = pinTasks[indexPath.row]
 			navigationItem.title = "메모"
 			self.navigationController?.pushViewController(vc, animated: true)
 		} else if indexPath.section == 1{
@@ -204,6 +207,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 				let sb = UIStoryboard.init(name: "Content", bundle: nil)
 				guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else {return}
 				vc.text = "\(row.title)"+"\n\(row.content)"
+				vc.comeMemo = filterTasks[indexPath.row]
 				navigationItem.title = "검색"
 				self.navigationController?.pushViewController(vc, animated: true)
 			} else {
@@ -211,7 +215,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 				let sb = UIStoryboard.init(name: "Content", bundle: nil)
 				guard let vc = sb.instantiateViewController(withIdentifier: "ContentViewController") as? ContentViewController else {return}
 				vc.text = "\(row.title)"+"\n\(row.content)"
-				
+				vc.comeMemo = unPinTasks[indexPath.row]
 				navigationItem.title = "메모"
 				self.navigationController?.pushViewController(vc, animated: true)
 			}
@@ -260,7 +264,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 					if self.pinTasks.count == 5 {
 						let alert = UIAlertController(title: "죄송합니다.", message: "무료버전은 5개밖에 고정되지 않아요 ㅜ.ㅜ \n월 1990원으로 프리미엄 혜택을 누려보세요!", preferredStyle: .alert)
 						
-						let cancle = UIAlertAction(title: "cancle", style: .cancel) { [self] action in
+						let cancle = UIAlertAction(title: "cancel", style: .cancel) { [self] action in
 							self.mainTableView.reloadData()
 						}
 						
@@ -297,9 +301,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 					let row = self.unPinTasks[indexPath.row]
 					let pin = UIContextualAction(style: .normal, title: nil) { (pinAction, view, completionHandler) in
 						if self.pinTasks.count == 5 {
-							let alert = UIAlertController(title: "죄송합니다.", message: "무료버전은 5개밖에 고정되지 않아요 ㅜ.ㅜ \n월 1990원으로 프리미엄 혜택을 누려보세요!", preferredStyle: .alert)
+							let alert = UIAlertController(title: "죄송합니다.", message: "무료버전은 5개밖에 고정되지 않아요 ㅜ.ㅜ \n월 2990원으로 프리미엄 혜택을 누려보세요!", preferredStyle: .alert)
 							
-							let cancle = UIAlertAction(title: "cancle", style: .cancel) { action in
+							let cancle = UIAlertAction(title: "cancel", style: .cancel) { action in
 								self.mainTableView.reloadData()
 							}
 							
@@ -344,6 +348,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 			}
 			mainTableView.reloadData()
 		}
+		navigationItem.title = "\(Tasks.count)개의 메모"
 	}
 	
 	func searchBarIsEmpty() -> Bool {

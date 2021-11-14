@@ -17,6 +17,8 @@ class ContentViewController: UIViewController {
 	var text: String? = nil
 	var newContentIdentifier: Bool = false
 	
+	var comeMemo: UserMemo?
+	
 	override func viewDidLoad() {
         super.viewDidLoad()
 //		print(newContentIdentifier)
@@ -61,11 +63,16 @@ class ContentViewController: UIViewController {
 		
 		let task = UserMemo(title: memoTitle, content: memoContent, date: date)
 		
-		
-		try! localRealm.write {
-			localRealm.add(task)
+		if newContentIdentifier {
+			try! localRealm.write {
+				localRealm.add(task)
+			}
+		} else {
+			try! localRealm.write {
+				comeMemo?.title = memoTitle
+				comeMemo?.content = memoContent
+			}
 		}
-		
 	}
 	
 	@objc func finishButtonClicked(_ sender: UIBarButtonItem) {
