@@ -21,7 +21,7 @@ class MainViewController: UIViewController {
 	var pinTasks: Results<UserMemo>!
 	var Tasks: Results<UserMemo>!
 	
-	var filterTasks = [UserMemo]()
+	var filterTasks: Results<UserMemo>!
 	
 	let searchController = UISearchController(searchResultsController: nil)
 	
@@ -329,11 +329,14 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		let section = indexPath.section
 		if isFiltering() {
-			let row = filterTasks[indexPath.row]
-			try! localRealm.write {
-				localRealm.delete(row)
+			if section == 1 {
+				let row = filterTasks[indexPath.row]
+				try! localRealm.write {
+					localRealm.delete(row)
+				}
+				//삭제하는 섹션만 리로드 가능 (reload.section)
+				mainTableView.reloadData()
 			}
-			mainTableView.reloadData()
 		} else {
 			if section == 0 {
 				let row = pinTasks[indexPath.row]
@@ -357,9 +360,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 	
 	func filterContentForSearchText(_ searchText: String, scope: String = "All") {
 		searchedText = searchText
-		filterTasks = Tasks.filter({ (memo: UserMemo) -> Bool in
-			return memo.title.lowercased().contains(searchText.lowercased())
-		})
+		filterTasks = localRealm.objects(UserMemo.self).filter("title CONTAINS[c] %@",searchText)
 		mainTableView.reloadData()
 	}
 	
